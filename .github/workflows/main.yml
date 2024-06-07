@@ -50,7 +50,7 @@ jobs:
           push: true
           build-args: |
             MOVIEPILOT_VERSION=${{ env.app_version }}
-          tags: ${{ secrets.HARBOR_REGISTRY }}/moviepilot:${{ env.app_version }}
+          tags: ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.HARBOR_USERNAME }}/moviepilot:${{ env.app_version }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha, scope=${{ github.workflow }}-docker
           cache-to: type=gha, scope=${{ github.workflow }}-docker
