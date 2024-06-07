@@ -40,10 +40,17 @@ jobs:
         run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_REGISTRY }} -u ${{ secrets.HARBOR_USERNAME }} --password-stdin
 
       - name: Build Image
-        run: docker build -t ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/moviepilot:${{ env.app_version }} .
-      
-      - name: Tag Image
-        run: docker tag ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/moviepilot:${{ env.app_version }} ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/moviepilot:${{ secrets.TAG_VERSION }}
-
-      - name: Push Image
-        run: docker push ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/moviepilot:${{ secrets.TAG_VERSION }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          platforms: |
+            linux/amd64
+            linux/arm64/v8
+          push: true
+          build-args: |
+            MOVIEPILOT_VERSION=${{ env.app_version }}
+          tags: ${{ secrets.HARBOR_REGISTRY }}/moviepilot:${{ env.app_version }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha, scope=${{ github.workflow }}-docker
+          cache-to: type=gha, scope=${{ github.workflow }}-docker
