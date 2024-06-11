@@ -15,7 +15,7 @@ class WebPushModule(_ModuleBase):
 
     @staticmethod
     def get_name() -> str:
-        return "VoceChat"
+        return "WebPush"
 
     def stop(self):
         pass
@@ -53,7 +53,8 @@ class WebPushModule(_ModuleBase):
                         subscription_info=sub,
                         data=json.dumps({
                             "title": caption,
-                            "body": content
+                            "body": content,
+                            "url": message.link or "/?shotcut=message"
                         }),
                         vapid_private_key=settings.VAPID.get("privateKey"),
                         vapid_claims={
